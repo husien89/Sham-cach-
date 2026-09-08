@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sham Cash — الرئيسية</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- الشريط العلوي -->
+    <header class="top-header">
+        <div class="header-left">
+            <span class="header-logo">💰</span>
+            <h1 class="header-title">Sham Cash</h1>
+        </div>
+        <div class="header-right">
+            <span class="user-info-header" id="userInfo">الزائر</span>
+            <span class="logout-icon" id="logoutBtn">🚪</span>
+        </div>
+    </header>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+        <!-- الإحصائيات -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <p class="stat-label">إجمالي الحالات</p>
+                <p class="stat-value total" id="statTotal">0</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">مفتوحة</p>
+                <p class="stat-value open" id="statOpen">0</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">قيد المتابعة</p>
+                <p class="stat-value progress" id="statProgress">0</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">مغلقة</p>
+                <p class="stat-value closed" id="statClosed">0</p>
+            </div>
+        </div>
+
+        <!-- إضافة حالة جديدة -->
+        <section class="section-card">
+            <h2 class="section-title">➕ إضافة حالة جديدة</h2>
+            <form id="addCaseForm">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>كود الحالة</label>
+                        <input type="text" id="caseCode" readonly>
+                    </div>
+                    <div class="input-group">
+                        <label>التاريخ</label>
+                        <input type="date" id="caseDate" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>اسم صاحب الحالة</label>
+                        <input type="text" id="caseOwner" required placeholder="الاسم الكامل">
+                    </div>
+                    <div class="input-group">
+                        <label>رقم الهاتف</label>
+                        <input type="tel" id="casePhone" placeholder="09XXXXXXXX">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>نوع الحالة</label>
+                        <select id="caseType" required>
+                            <option value="">— اختر النوع —</option>
+                            <option value="استفسار">استفسار</option>
+                            <option value="شكوى">شكوى</option>
+                            <option value="طلب خدمة">طلب خدمة</option>
+                            <option value="متابعة">متابعة</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>الأولوية</label>
+                        <select id="casePriority" required>
+                            <option value="عادية">🟢 عادية</option>
+                            <option value="مهمة">🟡 مهمة</option>
+                            <option value="عاجلة">🔴 عاجلة</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group form-full">
+                    <label>وصف الحالة</label>
+                    <textarea id="caseDescription" rows="3" required placeholder="أدخل وصفاً واضحاً..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>المسؤول</label>
+                        <input type="text" id="caseResponsible" placeholder="اسم الموظف">
+                    </div>
+                    <div class="input-group">
+                        <label>حالة الحالة</label>
+                        <select id="caseStatus" required>
+                            <option value="مفتوح">🟢 مفتوح</option>
+                            <option value="قيد المتابعة">🟡 قيد المتابعة</option>
+                            <option value="مؤجل">🟠 مؤجل</option>
+                            <option value="مغلق">🔵 مغلق</option>
+                            <option value="ملغى">⚫ ملغى</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="primary-btn">💾 حفظ الحالة</button>
+            </form>
+        </section>
+
+        <!-- البحث والفلترة -->
+        <section class="section-card">
+            <h2 class="section-title">🔍 البحث والفلترة</h2>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="ابحث بالكود — الاسم — الهاتف...">
+                <select id="filterStatus">
+                    <option value="الكل">الكل</option>
+                    <option value="مفتوح">مفتوحة</option>
+                    <option value="قيد المتابعة">قيد المتابعة</option>
+                    <option value="مغلق">مغلقة</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- قائمة الحالات -->
+        <section class="section-card">
+            <h2 class="section-title">📋 قائمة الحالات</h2>
+            <div id="casesContainer">
+                <p style="text-align:center; color:#8E8E93; padding:20px;">لم يتم تسجيل أي حالات حتى الآن</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- شريط التنقل السفلي -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">الرئيسية</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">التقارير</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span class="nav-label">المستخدمين</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label">الإعدادات</span>
+        </a>
+    </nav>
+
+    <script src="auth.js"></script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
