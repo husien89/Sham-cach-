@@ -1,0 +1,18 @@
+.nav-item.active {
+    color: var(--sc-primary);
+}
+
+.nav-icon {
+    font-size: 20px;
+}
+
+@media (max-width: 768px) {
+    .form-row,
+    .search-bar {
+        flex-direction: column;
+        grid-template-columns: 1fr;
+    }
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
