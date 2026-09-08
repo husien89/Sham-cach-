@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sham Cash</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="login-body">
+    <div class="login-wrapper">
+        <div class="login-logo-section">
+            <div class="app-logo">💰</div>
+            <h1 class="app-name">Sham Cash</h1>
+            <p class="app-subtitle">نظام إدارة الحالات</p>
+        </div>
+
+        <form id="loginForm" class="login-form">
+            <div class="input-group">
+                <label>اسم المستخدم</label>
+                <input type="text" id="username" placeholder="أدخل اسم المستخدم" autocomplete="username">
+            </div>
+
+            <div class="input-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+            </div>
+
+            <div class="input-group">
+                <label>الصلاحية</label>
+                <select id="userRole">
+                    <option value="admin">مدير النظام</option>
+                    <option value="coordinator">منسق الحالات</option>
+                    <option value="follower">متابع</option>
+                    <option value="viewer">مشاهد فقط</option>
+                </select>
+            </div>
+
+            <button type="submit" class="login-button">تسجيل الدخول</button>
+
+            <div class="login-footer-note">
+                <span>نسيت كلمة المرور؟</span>
+                <a href="#">تواصل مع المدير</a>
+            </div>
+        </form>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>
+
