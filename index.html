@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شام كاش — DEKONT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+        .section-card {
+            background: #fff;
+            color: #333;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #1e3c72;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .primary-btn {
+            background: #007AFF;
+            color: white;
+        }
+        .primary-btn:hover {
+            background: #0066DD;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #444;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        .orange-box {
+            background: #FFF5E1;
+            border: 2px solid #FF9500;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .green-box {
+            background: #E8FBEE;
+            border: 2px solid #34C759;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .fixed-sender {
+            color: #22c55e;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏦 شام كاش — إشعار تحويل</h1>
+
+        <!-- 📄 إنشاء إشعار DEKONT -->
+        <div class="section-card">
+            <h2 class="section-title">📄 إنشاء إشعار تحويل — DEKONT</h2>
+
+            <!-- 📷 مسح الكود -->
+            <button class="primary-btn" id="openCameraBtn" style="margin-bottom:10px;">
+                📸 امسح كود QR لملء البيانات
+            </button>
+            <p style="color:#666; font-size:14px; margin-bottom:15px;">المستلم ورقم العملية والتاريخ من الكود — تتغير تلقائياً ✅</p>
+
+            <!-- ✏️ المبلغ فقط — المرسل ثابت -->
+            <div class="orange-box">
+                <p style="color:#995800; font-weight:600; margin-bottom:10px;">✏️ أدخل المبلغ فقط</p>
+                <div class="input-group">
+                    <label>اسم المرسل:</label>
+                    <p class="fixed-sender">عبد العزيز الفارس</p>
+                </div>
+                <div class="input-group">
+                    <label>المبلغ بالدولار الأمريكي $</label>
+                    <input type="number" id="amountInput" placeholder="0.00" step="0.00">
+                </div>
+            </div>
+
+            <!-- 📋 البيانات من الكود — تتغير مع كل كود -->
+            <div class="green-box" id="dataBox">
+                <p style="color:#248f46; font-weight:600; margin-bottom:8px;">✅ من الكود تلقائياً — تتغير مع كل كود</p>
+                <p style="font-size:14px; line-height:1.8;">
+                    اسم المستلم: <span id="receiverVal">—</span><br>
+                    حساب المستلم: <span id="receiverAccVal">—</span><br>
+                    رقم العملية: <span id="refVal">—</span><br>
+                    تاريخ العملية: <span id="dateVal">—</span><br>
+                    وقت العملية: <span id="timeVal">—</span>
+                </p>
+            </div>
+
+            <!-- زر الإنشاء -->
+            <button class="primary-btn" id="createPdfBtn" style="margin-top:10px;">
+                📄 إنشاء الإشعار PDF
+            </button>
+        </div>
+
+        <!-- 👁️ معاينة الإشعار — مطابق للنموذج 100% -->
+        <div class="section-card" id="previewSection" style="display:none;">
+            <h2 class="section-title">👁️ معاينة الإشعار</h2>
+            <div id="dekontPreview" style="background:#fff; padding:25px; direction:rtl; text-align:right; border:1px solid #ddd; font-family:Arial, sans-serif; font-size:17px; line-height:2;">
+                <!-- المعاينة تظهر هنا بنفس ترتيب النموذج -->
+            </div>
+            <button class="primary-btn" id="downloadBtn" style="margin-top:15px;">⬇️ تحميل PDF</button>
+        </div>
+    </div>
+
+<!-- 📚 مكتبات QR + PDF -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<!-- 🧠 منطق التشغيل الكامل — مطابق للنموذج -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    let cameraStream = null;
+    let scanningActive = false;
+    let qrData = { receiver: '', receiverAcc: '', ref: '', date: '', time: '' };
+    
+    // 🔹 المرسل ثابت دائماً — لا يتغير أبداً
+    const SENDER_FIXED = 'عبد العزيز الفارس';
+    const SENDER_ACCOUNT = '2846********';
+
+    // العناصر
+    const openCameraBtn = document.getElementById('openCameraBtn');
+    const amountInput = document.getElementById('amountInput');
+    const createPdfBtn = document.getElementById('createPdfBtn');
+    const previewSection = document.getElementById('previewSection');
+    const dekontPreview = document.getElementById('dekontPreview');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    // تحديث بيانات الكود في الواجهة
+    function updateDataBox() {
+        document.getElementById('receiverVal').textContent = qrData.receiver || '—';
+        document.getElementById('receiverAccVal').textContent = qrData.receiverAcc || '—';
+        document.getElementById('refVal').textContent = qrData.ref || '—';
+        document.getElementById('dateVal').textContent = qrData.date || '—';
+        document.getElementById('timeVal').textContent = qrData.time || '—';
+    }
+
+    // 📷 فتح الكاميرا وقراءة QR
+    openCameraBtn.addEventListener('click', async () => {
+        try {
+            cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            
+            let videoContainer = document.getElementById('videoContainer');
+            if (!videoContainer) {
+                videoContainer = document.createElement('div');
+                videoContainer.id = 'videoContainer';
+                videoContainer.style = 'position:relative; margin:15px 0; border-radius:12px; overflow:hidden; background:#000;';
+                videoContainer.innerHTML = `
+                    <video id="qrVideo" autoplay playsinline style="width:100%; height:220px; object-fit:cover;"></video>
+                    <button id="closeCamera" style="position:absolute; top:10px; left:10px; background:#ff3b30; color:white; border:none; width:36px; height:36px; border-radius:50%; font-size:18px; cursor:pointer;">✕</button>
+                `;
+                openCameraBtn.parentNode.insertBefore(videoContainer, openCameraBtn.nextSibling);
+            }
+            
+            const qrVideo = document.getElementById('qrVideo');
+            qrVideo.srcObject = cameraStream;
+            videoContainer.style.display = 'block';
+            openCameraBtn.disabled = true;
+            scanningActive = true;
+            requestAnimationFrame(scanQR);
+
+            document.getElementById('closeCamera').onclick = () => {
+                scanningActive = false;
+                if (cameraStream) cameraStream.getTracks().forEach(t => t.stop());
+                videoContainer.style.display = 'none';
+                openCameraBtn.disabled = false;
+            };
+
+        } catch (err) {
+            alert('❌ تأكد من منح صلاحية الكاميرا من إعدادات المتصفح (القفل 🔒 بجانب الرابط)');
+        }
+    });
+
+    // مسح وقراءة QR
+    function scanQR() {
+        if (!scanningActive) return;
+        const qrVideo = document.getElementById('qrVideo');
+        if (!qrVideo || qrVideo.readyState !== qrVideo.HAVE_ENOUGH_DATA) {
+            requestAnimationFrame(scanQR);
+            return;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = qrVideo.videoWidth;
+        canvas.height = qrVideo.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(qrVideo, 0, 0, canvas.width, canvas.height);
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imgData.data, imgData.width, imgData.height);
+
+        if (code) {
+            scanningActive = false;
+            if (cameraStream) cameraStream.getTracks().forEach(t => t.stop());
+            const videoContainer = document.getElementById('videoContainer');
+            if (videoContainer) videoContainer.style.display = 'none';
+            openCameraBtn.disabled = false;
+            parseQR(code.data);
+            return;
+        }
+        requestAnimationFrame(scanQR);
+    }
+
+    // تحليل بيانات الكود — كل كود = بيانات جديدة
+    function parseQR(data) {
+        qrData.receiver = extractVal(data, 'اسم المستلم', 'حساب') || 'عبد حمد الشواخ';
+        qrData.receiverAcc = extractVal(data, 'حساب المستلم', 'رقم') || '3701********';
+        qrData.ref = extractVal(data, 'رقم العملية', 'تاريخ') || '417501845';
+        qrData.date = extractVal(data, 'تاريخ العملية', 'الوقت') || '2026-08-30';
+        qrData.time = extractVal(data, 'الوقت', '') || '10:10:22';
+
+        updateDataBox();
+        alert('✅ تم قراءة الكود!\nالمستلم: ' + qrData.receiver + '\nالعملية: ' + qrData.ref + '\n\n👉 أدخل المبلغ ثم اضغط إنشاء PDF');
+        amountInput.focus();
+    }
+
+    function extractVal(text, start, end) {
+        const s = text.indexOf(start);
+        if (s === -1) return '';
+        const startLen = start.length;
+        const e = end ? text.indexOf(end, s + startLen) : text.length;
+        return text.substring(s + startLen, e === -1 ? text.length : e).replace(/[:：]/g, '').trim();
+    }
+
+    // 📄 إنشاء الإشعار — مطابق للنموذج 100%
+    createPdfBtn.addEventListener('click', () => {
+        const amount = amountInput.value.trim() || '0';
+        
+        if (!qrData.ref) {
+            alert('⚠️ الرجاء مسح كود QR أولاً!');
+            return;
+        }
+
+        const now = new Date();
+        const genDate = now.toLocaleDateString('ar-SA');
+        const genTime = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+        // ✅ الترتيب مطابق للنموذج بالضبط كما في الصورة
+        dekontPreview.innerHTML = `
+            <div style="text-align:center; font-size:28px; font-weight:bold; margin-bottom:15px; padding-bottom:10px; border-bottom:2px solid #ccc;">شام كاش</div>
+            
+            <div style="text-align:center; font-size:18px; margin-bottom:8px;">
+                العملية إرسال — رقم ${qrData.ref}
+            </div>
+            
+            <div style="text-align:center; font-size:16px; margin-bottom:15px;">
+                تاريخ العملية: ${qrData.date} — ${qrData.time}
+            </div>
+            
+            <div style="margin-bottom:8px;">
+                اسم المرسل: <span style="color:#22c55e; font-weight:bold;">${SENDER_FIXED}</span>
+            </div>
+            <div style="margin-bottom:8px;">
+                حساب المرسل: ${SENDER_ACCOUNT}
+            </div>
+            <div style="margin-bottom:8px;">
+                اسم المستلم: ${qrData.receiver}
+            </div>
+            <div style="margin-bottom:8px;">
+                حساب المستلم: ${qrData.receiverAcc}
+            </div>
+            <div style="margin-bottom:8px;">
+                المبلغ: $ ${amount}
+            </div>
+            <div style="margin-bottom:15px;">
+                الملاحظة:
+            </div>
+            
+            <hr style="border:none; border-top:2px solid #ccc; margin:15px 0;">
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:14px;">
+                <span>${genDate} — ${genTime}</span>
+                <span style="color:#0066CC;">تم إنشاء الملف عبر شام كاش</span>
+            </div>
+        `;
+
+        previewSection.style.display = 'block';
+        previewSection.scrollIntoView({ behavior: 'smooth' });
+        alert('✅ تم إنشاء الإشعار!\nالمرسل: ' + SENDER_FIXED + '\nالمستلم: ' + qrData.receiver + '\nالمبلغ: $ ' + amount);
+    });
+
+    // ⬇️ تحميل PDF
+    downloadBtn.addEventListener('click', () => {
+        html2pdf()
+            .set({
+                margin: 5,
+                filename: 'DEKONT-' + Date.now() + '.pdf',
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            })
+            .from(dekontPreview)
+            .save()
+            .then(() => alert('✅ تم حفظ الملف PDF بنجاح!'));
+    });
+});
+</script>
+
+</body>
+</html>
